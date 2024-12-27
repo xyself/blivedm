@@ -133,19 +133,33 @@ class MyHandler(blivedm.BaseHandler):
 
     def _on_interact_word(self, client: blivedm.BLiveClient, message: web_models.InteractWordMessage):
         if message.msg_type == 2:
-            content = f'[{client.room_id}] {message.username} 进入房间'
+            content = f'[{client.room_id}] {message.username} 关注了房间'
             self._write_log('enter', content)
             print(content)
 
     def _on_interact_word(self, client: blivedm.BLiveClient, message: web_models.InteractWordMessage):
         if message.msg_type == 3:
-            content = f'[{client.room_id}] {message.username} 进入房间'
+            content = f'[{client.room_id}] {message.username} 分享了房间'
+            self._write_log('enter', content)
+            print(content)
+
+
+   def _on_interact_word(self, client: blivedm.BLiveClient, message: web_models.InteractWordMessage):
+        if message.msg_type == 4:
+            content = f'[{client.room_id}] {message.username} 特别关注了'
+            self._write_log('enter', content)
+            print(content)
+
+
+   def _on_interact_word(self, client: blivedm.BLiveClient, message: web_models.InteractWordMessage):
+        if message.msg_type == 5:
+            content = f'[{client.room_id}] {message.username} 互粉了放了'
             self._write_log('enter', content)
             print(content)
 
     def _on_interact_word(self, client: blivedm.BLiveClient, message: web_models.InteractWordMessage):
         if message.msg_type == 6:
-            content = f'[{client.room_id}] {message.username} 进入房间'
+            content = f'[{client.room_id}] {message.username} 为主播点赞了'
             self._write_log('enter', content)
             print(content)
 
