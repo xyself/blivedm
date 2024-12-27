@@ -11,11 +11,8 @@ import blivedm.models.web as web_models
 
 # 直播间ID的取值看直播间URL
 TEST_ROOM_IDS = [
-    12235923,
-    14327465,
-    21396545,
-    21449083,
     23105590,
+
 ]
 
 # 这里填一个已登录账号的cookie的SESSDATA字段的值。不填也可以连接，但是收到弹幕的用户名会打码，UID会变成0
@@ -84,19 +81,27 @@ async def run_multi_clients():
 
 
 class MyHandler(blivedm.BaseHandler):
-    # # 演示如何添加自定义回调
-    # _CMD_CALLBACK_DICT = blivedm.BaseHandler._CMD_CALLBACK_DICT.copy()
-    #
-    # # 看过数消息回调
-    # def __watched_change_callback(self, client: blivedm.BLiveClient, command: dict):
-    #     print(f'[{client.room_id}] WATCHED_CHANGE: {command}')
-    # _CMD_CALLBACK_DICT['WATCHED_CHANGE'] = __watched_change_callback  # noqa
+    def _get_log_filename(self, prefix: str) -> str:
+        """获取当天的日志文件名"""
+        from datetime import datetime
+        return f'logs/{prefix}_{datetime.now().strftime("%Y-%m-%d")}.log'
 
-    def _on_heartbeat(self, client: blivedm.BLiveClient, message: web_models.HeartbeatMessage):
-        print(f'[{client.room_id}] 心跳')
+    def _write_log(self, prefix: str, content: str):
+        """写入日志"""
+        import os
+        # 确保logs目录存在
+        os.makedirs('logs', exist_ok=True)
+        
+        filename = self._get_log_filename(prefix)
+        with open(filename, 'a', encoding='utf-8') as f:
+            from datetime import datetime
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            f.write(f'[{timestamp}] {content}\n')
 
     def _on_danmaku(self, client: blivedm.BLiveClient, message: web_models.DanmakuMessage):
-        print(f'[{client.room_id}] {message.uname}：{message.msg}')
+        content = f'[{client.room_id}] {message.uname}：{message.msg}'
+        self._write_log('danmaku', content)
+        print(content)
 
     def _on_gift(self, client: blivedm.BLiveClient, message: web_models.GiftMessage):
         print(f'[{client.room_id}] {message.uname} 赠送{message.gift_name}x{message.num}'
@@ -111,9 +116,11 @@ class MyHandler(blivedm.BaseHandler):
     def _on_super_chat(self, client: blivedm.BLiveClient, message: web_models.SuperChatMessage):
         print(f'[{client.room_id}] 醒目留言 ¥{message.price} {message.uname}：{message.message}')
 
-    # def _on_interact_word(self, client: blivedm.BLiveClient, message: web_models.InteractWordMessage):
-    #     if message.msg_type == 1:
-    #         print(f'[{client.room_id}] {message.username} 进入房间')
+    def _on_interact_word(self, client: blivedm.BLiveClient, message: web_models.InteractWordMessage):
+        if message.msg_type == 1:
+            content = f'[{client.room_id}] {message.username} 进入房间'
+            self._write_log('enter', content)
+            print(content)
 
 
 if __name__ == '__main__':
