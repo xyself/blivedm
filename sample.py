@@ -81,6 +81,15 @@ async def run_multi_clients():
 
 
 class MyHandler(blivedm.BaseHandler):
+    # # 演示如何添加自定义回调
+    # _CMD_CALLBACK_DICT = blivedm.BaseHandler._CMD_CALLBACK_DICT.copy()
+    #
+    # # 看过数消息回调
+    # def __watched_change_callback(self, client: blivedm.BLiveClient, command: dict):
+    #     print(f'[{client.room_id}] WATCHED_CHANGE: {command}')
+    # _CMD_CALLBACK_DICT['WATCHED_CHANGE'] = __watched_change_callback  # noqa
+
+
     def _get_log_filename(self, prefix: str) -> str:
         """获取当天的日志文件名"""
         from datetime import datetime
@@ -122,6 +131,23 @@ class MyHandler(blivedm.BaseHandler):
             self._write_log('enter', content)
             print(content)
 
+    def _on_interact_word(self, client: blivedm.BLiveClient, message: web_models.InteractWordMessage):
+        if message.msg_type == 2:
+            content = f'[{client.room_id}] {message.username} 进入房间'
+            self._write_log('enter', content)
+            print(content)
+
+    def _on_interact_word(self, client: blivedm.BLiveClient, message: web_models.InteractWordMessage):
+        if message.msg_type == 3:
+            content = f'[{client.room_id}] {message.username} 进入房间'
+            self._write_log('enter', content)
+            print(content)
+
+    def _on_interact_word(self, client: blivedm.BLiveClient, message: web_models.InteractWordMessage):
+        if message.msg_type == 6:
+            content = f'[{client.room_id}] {message.username} 进入房间'
+            self._write_log('enter', content)
+            print(content)
 
 if __name__ == '__main__':
     asyncio.run(main())
