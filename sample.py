@@ -9,14 +9,13 @@ import aiohttp
 import blivedm
 import blivedm.models.web as web_models
 
-# 直播间ID的取值看直播间URL
-TEST_ROOM_IDS = [
-    23105590,
+import os
 
-]
+# 从环境变量中获取 TEST_ROOM_IDS，默认值为空列表
+TEST_ROOM_IDS = os.getenv('TEST_ROOM_IDS', '').split(',') if os.getenv('TEST_ROOM_IDS') else []
 
-# 这里填一个已登录账号的cookie的SESSDATA字段的值。不填也可以连接，但是收到弹幕的用户名会打码，UID会变成0
-SESSDATA = ''
+# 从环境变量中获取 SESSDATA
+SESSDATA = os.getenv('SESSDATA', '')
 
 session: Optional[aiohttp.ClientSession] = None
 
@@ -81,15 +80,6 @@ async def run_multi_clients():
 
 
 class MyHandler(blivedm.BaseHandler):
-    # # 演示如何添加自定义回调
-    # _CMD_CALLBACK_DICT = blivedm.BaseHandler._CMD_CALLBACK_DICT.copy()
-    #
-    # # 看过数消息回调
-    # def __watched_change_callback(self, client: blivedm.BLiveClient, command: dict):
-    #     print(f'[{client.room_id}] WATCHED_CHANGE: {command}')
-    # _CMD_CALLBACK_DICT['WATCHED_CHANGE'] = __watched_change_callback  # noqa
-
-
     def _get_log_filename(self, prefix: str) -> str:
         """获取当天的日志文件名"""
         from datetime import datetime
@@ -131,37 +121,6 @@ class MyHandler(blivedm.BaseHandler):
             self._write_log('enter', content)
             print(content)
 
-    def _on_interact_word(self, client: blivedm.BLiveClient, message: web_models.InteractWordMessage):
-        if message.msg_type == 2:
-            content = f'[{client.room_id}] {message.username} 关注了房间'
-            self._write_log('enter', content)
-            print(content)
-
-    def _on_interact_word(self, client: blivedm.BLiveClient, message: web_models.InteractWordMessage):
-        if message.msg_type == 3:
-            content = f'[{client.room_id}] {message.username} 分享了房间'
-            self._write_log('enter', content)
-            print(content)
-
-
-   def _on_interact_word(self, client: blivedm.BLiveClient, message: web_models.InteractWordMessage):
-        if message.msg_type == 4:
-            content = f'[{client.room_id}] {message.username} 特别关注了'
-            self._write_log('enter', content)
-            print(content)
-
-
-   def _on_interact_word(self, client: blivedm.BLiveClient, message: web_models.InteractWordMessage):
-        if message.msg_type == 5:
-            content = f'[{client.room_id}] {message.username} 互粉了放了'
-            self._write_log('enter', content)
-            print(content)
-
-    def _on_interact_word(self, client: blivedm.BLiveClient, message: web_models.InteractWordMessage):
-        if message.msg_type == 6:
-            content = f'[{client.room_id}] {message.username} 为主播点赞了'
-            self._write_log('enter', content)
-            print(content)
 
 if __name__ == '__main__':
     asyncio.run(main())
