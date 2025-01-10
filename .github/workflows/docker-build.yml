@@ -3,10 +3,10 @@ name: Build and Push Docker Image
 on:
   push:
     branches:
-      - main  # 触发条件，可以根据需要修改
+      - dev  # 触发条件，可以根据需要修改
   pull_request:
     branches:
-      - main  # 触发条件，可以根据需要修改
+      - dev  # 触发条件，可以根据需要修改
 
 jobs:
   build:
